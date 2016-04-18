@@ -1,0 +1,88 @@
+import java.sql.*;
+import java.util.Scanner;
+
+public class DBH_SQL {
+	private static Connection con;
+	private static Statement stt;
+	
+	public static void main(String[] args){
+		String url  = "jdbc:mysql://10.16.168.209:3306/";
+		String user = "root";
+		String password = "";
+		
+		try{
+			Class.forName("com.mysql.jdbc.Driver").newInstance();
+			con = DriverManager.getConnection(url, user, password);
+			
+			stt = con.createStatement();
+			
+			//create and select db
+					
+			stt.execute("CREATE DATABASE IF NOT EXISTS softwarehuset");
+			stt.execute("USE softwarehuset");
+			
+			addUser();
+			
+			//add some entries
+//			stt.execute("INSERT INTO employee(fname, lname) VALUES" +
+//			"('John', 'Doe'),('Mary','Doe')");
+			
+			//Get employee with surname Doe
+			
+//			ResultSet res = stt.executeQuery("SELECT * FROM employee WHERE lname = 'Doe'");
+
+//			
+//			while(res.next()){
+//				System.out.println(res.getString("fname")+ "" + res.getString("lname"));
+//			}
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+	}
+	
+	public static void addUser() {
+		Scanner input = new Scanner(System.in);
+		System.out.print("First Name: ");
+		String firstName = input.nextLine();
+		System.out.print("Last Name: ");
+		String lastName = input.nextLine();
+		String pass = "";
+		
+		while(pass.equals("") || pass.length() > 8) {
+			System.out.print("Create Password: ");
+			pass = input.nextLine();
+			if(pass.equals("") || pass.length() > 8)
+				System.out.println("Your password cannot be greater than 8 characters or empty.");
+		}
+		
+		System.out.print("User Type[e, a, p]: ");
+		String empType = input.nextLine();
+		System.out.print("CPR: ");
+		int CPRnum = input.nextInt();
+		
+		try {
+		
+			String userName = firstName.substring(0, 2).toLowerCase() + lastName.substring(0, 2).toLowerCase();
+			try {
+				ResultSet res = stt.executeQuery("SELECT * FROM employee WHERE username = '" + userName + "'");
+				
+				if(res.getString(userName).equals(userName)) {
+					System.out.print("Username already taken. Please enter a unique username: ");
+					userName = input.nextLine();
+				}
+			} catch(Exception e) {
+				System.out.println(userName + " is a unique username.");
+			}
+			
+			String email = userName + "@piss.dk";
+		
+			stt.execute("INSERT INTO employee(username, fname, lname, password, email, emptype, CPR) VALUES" + 
+					"('" + userName + "', '" + firstName + "', '" + lastName + "', '" + pass 
+					+ "', '" + email + "', '" + empType + "', '" + CPRnum + "')");
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+}
