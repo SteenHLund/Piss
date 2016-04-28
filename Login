@@ -1,0 +1,40 @@
+import java.util.Scanner;
+
+public class Login extends Info{
+	
+	public Login() {
+		setUpUsers();
+	}
+	
+	public void setUpUsers() {
+		users.add(new User("fabu", "dogs89", "Fadi", "Bunni", 'a'));
+		users.add(new User("stlu", "ilovecats", "Steen", "Lund", 'p'));
+		users.add(new User("frpe", "horses!", "Frederik", "Petersen", 'p'));
+		users.add(new User("frla", "haters", "Frederik", "Larsen", 'e'));
+		users.add(new User("jodo", "nobody6", "John", "Doe", 'e'));
+		users.add(new User("jado", "nobodylover", "Jane", "Doe", 'e'));
+		users.add(new User("wism", "movies", "Will", "Smith", 'e'));
+		users.add(new User("dogl", "communityrapper", "Donald", "Glover", 'e'));
+	}
+	
+	public void logIn() {
+		Scanner input = new Scanner(System.in);
+		System.out.print("Username: ");
+		String username = input.nextLine();
+
+		System.out.print("Password: ");
+		String password = input.nextLine();
+		
+		for(int i = 0; i < users.size(); i++) {
+			if(users.get(i).validate(username, password)) {
+				loggedIn = true;
+				currentUser = users.get(i);
+				if(currentUser.isAdmin())
+					isAdmin = true;
+			}
+		}
+		
+		if(!loggedIn)
+			System.out.println("Incorrect username/password combination.\n");
+	}
+}
