@@ -52,22 +52,37 @@ public class Run extends Info{
 		do {
 			System.out.print("\nEdit a user by entering their number or enter 0 to go back: ");
 			tempInput = input.nextLine();
-			if(Integer.parseInt(tempInput) > 0 && Integer.parseInt(tempInput) < users.size())
+			if(Integer.parseInt(tempInput) > 0 && Integer.parseInt(tempInput) <= users.size())
 				editUsers(Integer.parseInt(tempInput) - 1);
 		}while(!tempInput.equals("0"));
 	}
 	
 	public static void editUsers(int pos) {
 		User tempUser = users.get(pos);
+		tempUser.outputData();
 		System.out.print("Edit(1)/Delete(2) or Cancel(0) user [" + tempUser.first + " " + tempUser.last + "]: ");
 		String tempInput = input.nextLine();
 		
 		if(tempInput.equals("1")) {
 			System.out.println("1: Username");
 			System.out.println("2: Password");
+			System.out.println("3: Back");
+			System.out.print("Input: ");
 			tempInput = input.nextLine();
 			if(tempInput.equals("1")) {
-				
+				System.out.print("Please enter a unique username: ");
+				String username = input.nextLine().toLowerCase();
+				username = uniqueUsername(username);
+				users.get(pos).username = username;
+				users.get(pos).outputData();
+			} else if(tempInput.equals("2")) {
+				String newPass = "";
+				while(newPass.isEmpty()) {
+					System.out.print("New password: ");
+					newPass = input.nextLine();
+				}
+				users.get(pos).password = newPass;
+				users.get(pos).outputData();
 			}
 		}else if(tempInput.equals("2") && tempUser.isAdmin() == false)
 			users.remove(pos);
@@ -87,14 +102,7 @@ public class Run extends Info{
 		
 		String username = fname.substring(0, 2).toLowerCase() + lname.substring(0, 2).toLowerCase();
 		
-		for(int i = 0; i < users.size(); i++) {
-			if(users.get(i).username.equals(username)) {
-				System.out.print("Duplicate username.  Please enter a unique 4 letter one: ");
-				username = input.nextLine().toLowerCase();
-				System.out.println("The username chosen is [" + username + "]\n");
-				i=0;
-			}
-		}
+		uniqueUsername(username);
 		
 		User tempUser = new User(username, pword, fname, lname, 'e');
 		tempUser.outputData();
@@ -106,5 +114,23 @@ public class Run extends Info{
 			users.add(tempUser);
 		else
 			System.out.println("Cancelled.");
+	}
+	
+	public static String uniqueUsername(String username) {
+		boolean changed = false;
+		do {
+			changed = false;
+			for (int i = 0; i < users.size(); i++) {
+				if (users.get(i).username.equals(username)) {
+					System.out.print("Duplicate username.  Please enter a unique 4 letter one: ");
+					username = input.nextLine().toLowerCase();
+					changed = true;
+					i = 0;
+				}
+			}
+		} while (changed == true);
+		
+		System.out.println("The username chosen is [" + username + "]\n");
+		return username;
 	}
 }
