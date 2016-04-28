@@ -1,0 +1,7 @@
+import java.util.ArrayList;
+
+public class Info {
+	public static boolean loggedIn = false, isAdmin = false;
+	public static User currentUser = null;
+	public static ArrayList<User> users = new ArrayList<User>();
+}
